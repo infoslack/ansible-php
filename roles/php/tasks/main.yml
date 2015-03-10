@@ -1,0 +1,30 @@
+---
+- name: Add PHP Repo
+  apt_repository: repo="ppa:ondrej/php5-5.6" state=present
+  register: ppaphp
+
+- name: Install PHP-FPM
+  register: phpinstall
+  apt: pkg={{ item }} state=installed update_cache=true
+  with_items:
+    - php5-fpm
+    - php5-cli
+    - php5-mysql
+    - php5-curl
+    - php5-gd
+    - php5-mcrypt
+    - php5-memcached
+  notify:
+    - start php
+
+- name: Add PHP.ini Configuration
+  template: >
+    src=php.ini.j2
+    dest=/etc/php5/fpm/php.ini
+
+- name: Add Resource Pool PHP-FPM Configuration
+  template: >
+    src=www.conf.j2
+    dest=/etc/php5/fpm/pool.d/www.conf
+  notify:
+    - restart php

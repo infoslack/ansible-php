@@ -1,0 +1,34 @@
+---
+- name: Server
+  hosts: app
+  sudo: yes
+  user: ubuntu
+  gather_facts: False
+
+  roles:
+    - common
+    - ufw
+    - php
+    - nginx
+    - mysql
+
+# Use this block to send a message to an IRC channel
+#- name: Alert we are done
+#  hosts: notify
+#  tasks:
+#    - irc: >
+#        server=irc.freenode.net
+#        channel="#channel"
+#        msg="All finished ."
+#        color=red
+#        nick=ansibleAlert
+
+# Use this block to a different node
+#- name: Database Server
+#  hosts: db
+#  sudo: yes
+#  user: root
+#
+#  roles:
+#    - common
+#    - mysql

@@ -1,0 +1,29 @@
+server {
+  listen {{nginx_port}};
+  client_max_body_size 2M;
+  
+  server_name {{nginx_hostname}};
+  keepalive_timeout 5;
+  
+  root /var/www/{{app_name}};
+  
+  access_log  off;
+  error_log off;
+
+  location ~ \.php$ {
+    try_files $uri = 404;
+    fastcgi_pass 127.0.0.1:9000;
+    fastcgi_index index.php;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    include fastcgi_params;
+  }
+
+  if (!-e $request_filename) {
+    rewrite ^/(.+)\/?([0-9]*)\/?$ /index.php break;
+  }
+
+  location = /favicon.ico {
+    expires    max;
+    add_header Cache-Control public;
+  }
+}

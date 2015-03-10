@@ -1,0 +1,15 @@
+---
+- name: UFW - set default policy
+  ufw: policy=deny
+
+- name: UFW - enable logging
+  ufw: logging=on
+
+- name: UFW - allow services
+  ufw: rule=allow port={{ item }}
+  with_items:
+    - 80
+    - 22
+
+- name: UFW - enabled
+  ufw: state=enabled

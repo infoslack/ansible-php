@@ -1,0 +1,62 @@
+---
+- name: Install extra packages
+  apt: "pkg={{item}} state=latest force=yes update_cache=yes"
+  with_items:
+    - build-essential
+    - unattended-upgrades
+    - git
+    - ufw
+    - ntp
+  tags: setup
+
+- name: Configure NTP (Network Time Protocol)
+  template: >
+    src=timezone.j2
+    dest=/etc/timezone
+  notify: update tzdata
+  tags: setup
+
+- name: Create user for deploy
+  user: >
+    name=deploy
+    group=www-data
+    comment="Deploy user"
+    state=present
+  tags: setup
+
+- name: Add public key to authorized_keys
+  authorized_key: >
+    user=deploy
+    state=present
+    key="{{lookup('file', '~/.ssh/id_rsa.pub')}}"
+  tags: setup
+
+# Add the public keys of the allowed list
+# Set up authorized_keys for the deploy user
+#
+#- name: Add authorized_keys for the deploy user
+#  authorized_keys: >
+#    user=deploy
+#    key="{{item}}"
+#
+#  with_items:
+#    - https://github.com/infoslack.keys
+#    - https://github.com/example.keys
+#
+#  or
+#
+#  with_file:
+#    - public_keys/infoslack
+#    - public_keys/example
+
+- name: Configure unattended upgrades
+  template: >
+    src=50unattended-upgrades.j2
+    dest=/etc/apt/apt.conf.d/50unattended-upgrades
+  tags: setup
+
+- name: Configure time for unattended upgrades
+  template: >
+    src=10periodic.j2
+    dest=/etc/apt/apt.conf.d/10periodic
+  tags: setup
