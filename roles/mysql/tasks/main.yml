@@ -1,0 +1,10 @@
+---
+- name: MySQL Install
+  apt: "pkg={{item}} state=latest force=yes update_cache=yes"
+  with_items:
+    - mysql-server
+    - mysql-client
+
+#TODO:- create database
+#TODO:- create user and set password
+#TODO:- define privileges
