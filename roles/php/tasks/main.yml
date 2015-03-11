@@ -21,6 +21,8 @@
   template: >
     src=php.ini.j2
     dest=/etc/php5/fpm/php.ini
+  tags:
+    - php
 
 - name: Add Resource Pool PHP-FPM Configuration
   template: >
@@ -28,3 +30,5 @@
     dest=/etc/php5/fpm/pool.d/www.conf
   notify:
     - restart php
+  tags:
+    - php
